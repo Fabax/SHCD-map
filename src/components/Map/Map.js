@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { selectLocation, updateHistory } from '../../actions';
 import * as d3 from 'd3';
 import LondonMapSvg from '../../assets/LondonMapSvg';
-import './Map.css';
+import './Map.scss';
 
 class Map extends Component {
   constructor(props) {
