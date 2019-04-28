@@ -1,0 +1,11 @@
+.mapPage {
+  overflow-y: hidden; // hide vertical
+  overflow-x: hidden; // hide horizontal
+  position: absolute;
+  height: 90%;
+  width: 90%;
+}
+
+.mapContainer {
+  height: 700px;
+}

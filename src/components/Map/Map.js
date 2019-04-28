@@ -22,10 +22,7 @@ class Map extends Component {
 
   // D3 stuff;
   bindD3() {
-    this.map = d3
-      .select('#londonMap')
-      .attr('width', '100%')
-      .attr('height', '100%');
+    this.map = d3.select('#londonMap').attr('height', '100%');
 
     this.houses = this.map
       .selectAll('#SW-Yellow, #SW-Orange')
@@ -44,6 +41,15 @@ class Map extends Component {
     this.houses.on('mouseout', function() {
       d3.select(this).style('opacity', '1');
     });
+
+    let svg = d3.select('#wrapper').call(
+      d3
+        .zoom()
+        .scaleExtent([1, 8])
+        .on('zoom', function() {
+          svg.attr('transform', d3.event.transform);
+        }),
+    );
   }
 
   updateD3() {
@@ -88,11 +94,7 @@ class Map extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <LondonMapSvg />
-      </div>
-    );
+    return <LondonMapSvg />;
   }
 }
 
