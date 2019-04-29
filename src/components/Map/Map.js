@@ -83,10 +83,7 @@ class Map extends Component {
         .join(',');
 
       //update colors
-      this.map
-        .select('#SW-Yellow')
-        .selectAll(ids)
-        .style('fill', 'green');
+      this.map.selectAll(ids).style('fill', 'green');
     }
   }
 
