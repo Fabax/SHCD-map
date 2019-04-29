@@ -1,57 +1,61 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './Directory.scss';
+import './DirectorySearch.scss';
 import Autosuggest from 'react-autosuggest';
 
-class Directory extends Component {
+class DirectorySearch extends Component {
   constructor() {
     super();
 
-    // Autosuggest is a controlled component.
-    // This means that you need to provide an input value
-    // and an onChange handler that updates this value (see below).
-    // Suggestions also need to be provided to the Autosuggest,
-    // and they are initially empty because the Autosuggest is closed.
     this.state = {
       value: '',
       suggestions: [],
     };
   }
-  //auto complete stuf
-  // Teach Autosuggest how to calculate suggestions for any given input value.
+
   getSuggestions = value => {
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
 
-    //contains number
     let hasNumber = /\d/.test(inputValue);
+    let suggestionList = null;
 
     if (hasNumber) {
-      return inputLength === 0
-        ? []
-        : this.props.locations.filter(loc => {
-            return loc.address.toLowerCase().includes(inputValue);
-          });
+      suggestionList =
+        inputLength === 0
+          ? []
+          : this.props.locations.filter(loc => {
+              return loc.address.toLowerCase().includes(inputValue);
+            });
     } else {
-      return inputLength === 0
-        ? []
-        : this.props.locations.filter(loc => {
-            return loc.name.toLowerCase().includes(inputValue);
-          });
+      suggestionList =
+        inputLength === 0
+          ? []
+          : this.props.locations.filter(loc => {
+              return loc.name.toLowerCase().includes(inputValue);
+            });
     }
+
+    if (suggestionList.length > 10) {
+      suggestionList = suggestionList.splice(0, 10);
+    }
+    return suggestionList;
   };
 
   // When suggestion is clicked, Autosuggest needs to populate the input
-  // based on the clicked suggestion. Teach Autosuggest how to calculate the
-  // input value for every given suggestion.
   getSuggestionValue = suggestion => {
     return suggestion.name + ' - ' + suggestion.address;
   };
   // Use your imagination to render suggestions.
   renderSuggestion = suggestion => (
-    <div>
-      {suggestion.name} - {suggestion.address}
+    <div class="list is-hoverable">
+      <a class="list-item">
+        {suggestion.name} - {suggestion.address}
+      </a>
     </div>
+    // <div>
+    //   {suggestion.name} - {suggestion.address}
+    // </div>
   );
 
   onChange = (event, { newValue }) => {
@@ -61,7 +65,6 @@ class Directory extends Component {
   };
 
   // Autosuggest will call this function every time you need to update suggestions.
-  // You already implemented this logic above, so just use it.
   onSuggestionsFetchRequested = ({ value }) => {
     this.setState({
       suggestions: this.getSuggestions(value),
@@ -74,25 +77,33 @@ class Directory extends Component {
       suggestions: [],
     });
   };
+
+  renderInputComponent = inputProps => (
+    <div>
+      <input {...inputProps} className="input" />
+    </div>
+  );
   // -------
   render() {
     const { value, suggestions } = this.state;
 
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
-      placeholder: 'Type a programming language',
+      placeholder: 'Type a name or an adress',
       value,
       onChange: this.onChange,
     };
     return (
-      <div className="directory">
+      <div className="directorySearch">
         <Autosuggest
           suggestions={suggestions}
           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.onSuggestionsClearRequested}
           getSuggestionValue={this.getSuggestionValue}
           renderSuggestion={this.renderSuggestion}
+          renderInputComponent={this.renderInputComponent}
           inputProps={inputProps}
+          className="input"
         />
       </div>
     );
@@ -104,4 +115,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(Directory);
+export default connect(mapStateToProps)(DirectorySearch);
