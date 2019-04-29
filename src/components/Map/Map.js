@@ -55,7 +55,38 @@ class Map extends Component {
   updateD3() {
     // turn array visited places in a string
     this.resetD3Colors();
+    this.colorLeads();
+    this.colorSearchHightlights();
+  }
 
+  colorSearchHightlights() {
+    if (this.props.hightlights.length !== 0) {
+      let ids = this.props.hightlights.map(location => {
+        // console.log(location);
+        //fix later by switching id naming on the svg
+        if (location.disctrict === 'SW') {
+          let id = location.address.slice(-2) + location.address.slice(0, -2);
+          return '#' + id;
+        }
+
+        return undefined;
+      });
+
+      ids = ids.filter(el => {
+        return el != null;
+      });
+
+      ids.join(',');
+
+      //update colors
+      d3.select('#londonMap')
+        .select('#SW-Yellow')
+        .selectAll(ids)
+        .style('fill', 'blue');
+    }
+  }
+
+  colorLeads() {
     if (this.props.history.length !== 0) {
       let ids = this.props.history
         .map(blockId => {
@@ -99,11 +130,11 @@ class Map extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     locations: state.locations,
     history: state.history,
     selectedLocation: state.selectedLocation,
+    hightlights: state.highlightedLocations,
   };
 };
 

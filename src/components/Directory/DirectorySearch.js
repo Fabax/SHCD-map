@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './DirectorySearch.scss';
 import Autosuggest from 'react-autosuggest';
+import { highlightedLocations } from '../../actions';
 
 class DirectorySearch extends Component {
   constructor() {
@@ -36,9 +37,11 @@ class DirectorySearch extends Component {
             });
     }
 
-    if (suggestionList.length > 10) {
-      suggestionList = suggestionList.splice(0, 10);
+    if (suggestionList.length > 30) {
+      suggestionList = suggestionList.splice(0, 30);
     }
+
+    this.props.highlightedLocations(suggestionList);
     return suggestionList;
   };
 
@@ -109,4 +112,7 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(DirectorySearch);
+export default connect(
+  mapStateToProps,
+  { highlightedLocations },
+)(DirectorySearch);
