@@ -23,10 +23,7 @@ class Map extends Component {
   // D3 stuff;
   bindD3() {
     this.map = d3.select('#londonMap').attr('height', '100%');
-
-    this.houses = this.map
-      .selectAll('#SW-Yellow, #SW-Orange')
-      .selectAll('path');
+    this.houses = this.map.selectAll("path[id^='L-']");
   }
 
   bindD3Events() {
@@ -64,25 +61,12 @@ class Map extends Component {
       let ids = this.props.hightlights.map(location => {
         // console.log(location);
         //fix later by switching id naming on the svg
-        if (location.disctrict === 'SW') {
-          let id = location.address.slice(-2) + location.address.slice(0, -2);
-          return '#' + id;
-        }
-
-        return undefined;
-      });
-
-      ids = ids.filter(el => {
-        return el != null;
+        return '#L-' + location.address;
       });
 
       ids.join(',');
-
       //update colors
-      d3.select('#londonMap')
-        .select('#SW-Yellow')
-        .selectAll(ids)
-        .style('fill', 'blue');
+      this.map.selectAll(ids).style('fill', 'blue');
     }
   }
 
@@ -106,17 +90,14 @@ class Map extends Component {
 
   resetD3Colors() {
     //reset color
-    d3.select('#londonMap')
-      .select('#SW-Yellow')
-      .selectAll('path')
-      .style('fill', '#e8c329');
+    this.houses.style('fill', '#e8c329');
   }
 
   onBlockClicked(id) {
-    let quickFixedId = id.slice(2) + id.slice(0, 2);
+    let noPrefixId = id.slice(2);
 
     let location = this.props.locations.filter(location => {
-      return location.address === quickFixedId;
+      return location.address === noPrefixId;
     });
 
     this.props.selectLocation(location[0]);
