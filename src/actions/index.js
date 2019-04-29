@@ -14,3 +14,11 @@ export const updateHistory = location => {
     payload: location,
   };
 };
+
+export const highlightedLocations = locations => {
+  //returns an action
+  return {
+    type: 'HIGHLIGHT_LOCATIONS',
+    payload: locations,
+  };
+};

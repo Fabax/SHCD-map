@@ -42,20 +42,16 @@ class DirectorySearch extends Component {
     return suggestionList;
   };
 
-  // When suggestion is clicked, Autosuggest needs to populate the input
   getSuggestionValue = suggestion => {
     return suggestion.name + ' - ' + suggestion.address;
   };
-  // Use your imagination to render suggestions.
+
   renderSuggestion = suggestion => (
-    <div class="list is-hoverable">
-      <a class="list-item">
+    <div className="list is-hoverable">
+      <a className="list-item">
         {suggestion.name} - {suggestion.address}
       </a>
     </div>
-    // <div>
-    //   {suggestion.name} - {suggestion.address}
-    // </div>
   );
 
   onChange = (event, { newValue }) => {
@@ -64,14 +60,12 @@ class DirectorySearch extends Component {
     });
   };
 
-  // Autosuggest will call this function every time you need to update suggestions.
   onSuggestionsFetchRequested = ({ value }) => {
     this.setState({
       suggestions: this.getSuggestions(value),
     });
   };
 
-  // Autosuggest will call this function every time you need to clear suggestions.
   onSuggestionsClearRequested = () => {
     this.setState({
       suggestions: [],

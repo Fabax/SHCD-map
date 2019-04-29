@@ -23,8 +23,16 @@ const historyReducer = (history = [], action) => {
   return history;
 };
 
+const highlightedLocationsReducer = (highlightedLocations = [], action) => {
+  if (action.type === 'HIGHLIGHT_LOCATIONS') {
+    return action.payload;
+  }
+  return highlightedLocations;
+};
+
 export default combineReducers({
   locations: locationsReducer,
   selectedLocation: selectedLocationReducer,
+  highlightedLocations: highlightedLocationsReducer,
   history: historyReducer,
 });
