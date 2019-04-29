@@ -11,6 +11,7 @@ class Map extends Component {
     this.state = { selectedBlock: '', visitedBlocks: [] };
   }
 
+  //Lifecycle ----------------------
   componentDidMount() {
     this.bindD3();
     this.bindD3Events();
@@ -20,7 +21,11 @@ class Map extends Component {
     this.updateD3();
   }
 
-  // D3 stuff;
+  render() {
+    return <LondonMapSvg />;
+  }
+
+  // D3 stuff ----------------------
   bindD3() {
     this.map = d3.select('#londonMap').attr('height', '100%');
     this.houses = this.map.selectAll("path[id^='L-']");
@@ -52,36 +57,33 @@ class Map extends Component {
   updateD3() {
     // turn array visited places in a string
     this.resetD3Colors();
-    this.colorLeads();
     this.colorSearchHightlights();
+    this.colorLeads();
   }
 
   colorSearchHightlights() {
     if (this.props.hightlights.length !== 0) {
       let ids = this.props.hightlights.map(location => {
-        // console.log(location);
-        //fix later by switching id naming on the svg
         return '#L-' + location.address;
       });
 
       ids.join(',');
+
       //update colors
-      this.map.selectAll(ids).style('fill', 'blue');
+      this.map.selectAll(ids).style('fill', 'red');
     }
   }
 
   colorLeads() {
     if (this.props.history.length !== 0) {
       let ids = this.props.history
-        .map(blockId => {
-          //fix later by switching id naming on the svg
-          let id = blockId.address.slice(-2) + blockId.address.slice(0, -2);
-          return '#' + id;
+        .map(location => {
+          return '#L-' + location.address;
         })
         .join(',');
 
       //update colors
-      d3.select('#londonMap')
+      this.map
         .select('#SW-Yellow')
         .selectAll(ids)
         .style('fill', 'green');
@@ -90,7 +92,23 @@ class Map extends Component {
 
   resetD3Colors() {
     //reset color
-    this.houses.style('fill', '#e8c329');
+
+    this.map
+      .selectAll('#SW-Blue, #NW-Blue')
+      .selectAll('path')
+      .style('fill', '#96D2D3');
+    this.map
+      .selectAll('#SW-Orange, #NW-Orange')
+      .selectAll('path')
+      .style('fill', '#F9C265');
+    this.map
+      .selectAll('#SW-Yellow ,#NW-Yellow')
+      .selectAll('path')
+      .style('fill', '#E8C329');
+    this.map
+      .selectAll('#SW-Green, #NW-Green')
+      .selectAll('path')
+      .style('fill', '#99A06A');
   }
 
   onBlockClicked(id) {
@@ -103,10 +121,6 @@ class Map extends Component {
     this.props.selectLocation(location[0]);
     this.props.updateHistory(location[0]);
     this.updateD3();
-  }
-
-  render() {
-    return <LondonMapSvg />;
   }
 }
 

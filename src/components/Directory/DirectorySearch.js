@@ -70,6 +70,7 @@ class DirectorySearch extends Component {
   };
 
   onSuggestionsClearRequested = () => {
+    this.props.highlightedLocations([]);
     this.setState({
       suggestions: [],
     });
