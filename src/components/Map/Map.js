@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectLocation, updateHistory } from '../../actions';
+import {
+  selectLocation,
+  updateHistory,
+  highlightedLocations,
+} from '../../actions';
 import * as d3 from 'd3';
 import LondonMapSvg from '../../assets/LondonMapSvg';
 import './Map.scss';
@@ -71,6 +75,28 @@ class Map extends Component {
         .selectAll(ids)
         .style('fill', 'green');
     }
+
+    if (this.props.highlights.length !== 0) {
+      let ids = this.props.highlights.map(highlight => {
+        if (highlight.disctrict === 'SW') {
+          let id = highlight.address.slice(-2) + highlight.address.slice(0, -2);
+          return '#' + id;
+        }
+      });
+
+      var test = ids
+        .filter(function(el) {
+          return el != null;
+        })
+        .join(',');
+
+      if (test) {
+        d3.select('#londonMap')
+          .select('#SW-Yellow')
+          .selectAll(test)
+          .style('fill', 'blue');
+      }
+    }
   }
 
   resetD3Colors() {
@@ -99,15 +125,15 @@ class Map extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     locations: state.locations,
     history: state.history,
     selectedLocation: state.selectedLocation,
+    highlights: state.highlightedLocations,
   };
 };
 
 export default connect(
   mapStateToProps,
-  { selectLocation, updateHistory },
+  { selectLocation, updateHistory, highlightedLocations },
 )(Map);
