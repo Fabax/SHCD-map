@@ -4,11 +4,18 @@ import { selectLocation, updateHistory } from '../../actions';
 import * as d3 from 'd3';
 import LondonMapSvg from '../../assets/LondonMapSvg';
 import './Map.scss';
+import { runInThisContext } from 'vm';
 
 class Map extends Component {
   constructor(props) {
     super(props);
     this.state = { selectedBlock: '', visitedBlocks: [] };
+    this.color = {
+      blue: ['#96D2D3', '#0097C2'],
+      orange: ['#F9C265', '#E94720'],
+      yellow: ['#E8C329', '#FBBE00'],
+      green: ['#99A06A', '#1EB38B'],
+    };
   }
 
   //Lifecycle ----------------------
@@ -56,7 +63,7 @@ class Map extends Component {
 
   updateD3() {
     // turn array visited places in a string
-    this.resetD3Colors();
+    this.setColorHouses('path', 0);
     this.colorSearchHightlights();
     this.colorLeads();
   }
@@ -83,29 +90,27 @@ class Map extends Component {
         .join(',');
 
       //update colors
-      this.map.selectAll(ids).style('fill', 'green');
+      this.setColorHouses(ids, 1);
     }
   }
 
-  resetD3Colors() {
-    //reset color
-
+  setColorHouses(ids = 'path', i) {
     this.map
       .selectAll('#SW-Blue, #NW-Blue')
-      .selectAll('path')
-      .style('fill', '#96D2D3');
+      .selectAll(ids)
+      .style('fill', this.color.blue[i]);
     this.map
       .selectAll('#SW-Orange, #NW-Orange')
-      .selectAll('path')
-      .style('fill', '#F9C265');
+      .selectAll(ids)
+      .style('fill', this.color.orange[i]);
     this.map
       .selectAll('#SW-Yellow ,#NW-Yellow')
-      .selectAll('path')
-      .style('fill', '#E8C329');
+      .selectAll(ids)
+      .style('fill', this.color.yellow[i]);
     this.map
       .selectAll('#SW-Green, #NW-Green')
-      .selectAll('path')
-      .style('fill', '#99A06A');
+      .selectAll(ids)
+      .style('fill', this.color.green[i]);
   }
 
   onBlockClicked(id) {
