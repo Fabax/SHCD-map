@@ -37,9 +37,9 @@ class DirectorySearch extends Component {
             });
     }
 
-    // if (suggestionList.length > 10) {
-    //   suggestionList = suggestionList.splice(0, 10);
-    // }
+    if (suggestionList.length > 20) {
+      suggestionList = suggestionList.splice(0, 20);
+    }
 
     this.props.highlightedLocations(suggestionList);
     return suggestionList;
@@ -70,6 +70,7 @@ class DirectorySearch extends Component {
   };
 
   onSuggestionsClearRequested = () => {
+    this.props.highlightedLocations([]);
     this.setState({
       suggestions: [],
     });
