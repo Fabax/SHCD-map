@@ -97,8 +97,8 @@ class Map extends Component {
       this.setColorHouses(ids, 1);
     }
 
-    if (this.props.highlights.length !== 0) {
-      let ids = this.props.highlights.map(highlight => {
+    if (this.props.hightlights.length !== 0) {
+      let ids = this.props.hightlights.map(highlight => {
         if (highlight.disctrict === 'SW') {
           let id = highlight.address.slice(-2) + highlight.address.slice(0, -2);
           return '#' + id;
