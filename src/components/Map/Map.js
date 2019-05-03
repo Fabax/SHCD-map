@@ -32,13 +32,13 @@ class Map extends Component {
   }
 
   render() {
-    return <div className="mapContainer-inner" />;
+    return <div className="londonMap" />;
   }
 
   // D3 stuff ----------------------
   loadSvg() {
     d3.xml(londonMap).then(data => {
-      d3.select('.mapContainer-inner')
+      d3.select('.londonMap')
         .node()
         .append(data.documentElement);
 
@@ -48,12 +48,12 @@ class Map extends Component {
   }
 
   bindD3MouseEvents() {
+    //set up variables for easy shortcuts later
     let _this = this;
-
-    this.map = d3.select('.mapContainer-inner svg');
-
+    this.map = d3.select('.londonMap svg');
     this.houses = this.map.selectAll("path[id^='L-']");
 
+    //Mouse events
     this.houses.on('click', function() {
       _this.onBlockClicked(this.id);
     });
@@ -63,14 +63,21 @@ class Map extends Component {
     this.houses.on('mouseout', function() {
       d3.select(this).style('opacity', '1');
     });
-    let svg = d3.select('#mapcontainer').call(
+
+    this.setZoom();
+  }
+
+  setZoom() {
+    this.map.style('pointer-events', 'all').call(
       d3
         .zoom()
-        .scaleExtent([1, 8])
-        .on('zoom', function() {
-          svg.attr('transform', d3.event.transform);
-        }),
+        .scaleExtent([1, 4])
+        .on('zoom', this.zoom),
     );
+  }
+
+  zoom() {
+    d3.select('#mapcontainer').attr('transform', d3.event.transform);
   }
 
   updateD3() {
