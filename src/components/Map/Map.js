@@ -6,26 +6,25 @@ import {
   highlightedLocations,
 } from '../../actions';
 import * as d3 from 'd3';
-import LondonMapSvg from '../../assets/LondonMapSvg';
 import './Map.scss';
-import { runInThisContext } from 'vm';
+import londonMap from '../../assets/LondonMapSvg.svg';
 
 class Map extends Component {
   constructor(props) {
     super(props);
     this.state = { selectedBlock: '', visitedBlocks: [] };
     this.color = {
-      blue: ['#96D2D3', '#0097C2'],
-      orange: ['#F9C265', '#E94720'],
-      yellow: ['#E8C329', '#FBBE00'],
-      green: ['#99A06A', '#1EB38B'],
+      blue: ['#A4BDBA', '#0097C2'],
+      orange: ['#DDA187', '#E94720'],
+      yellow: ['#DEAC6F', '#FBBE00'],
+      green: ['#9DB77A', '#1EB38B'],
+      red: ['#C84753', 'red'],
     };
   }
 
   //Lifecycle ----------------------
   componentDidMount() {
-    this.bindD3();
-    this.bindD3Events();
+    this.loadSvg();
   }
 
   componentDidUpdate() {
@@ -33,29 +32,38 @@ class Map extends Component {
   }
 
   render() {
-    return <LondonMapSvg />;
+    return <div className="mapContainer-inner" />;
   }
 
   // D3 stuff ----------------------
-  bindD3() {
-    this.map = d3.select('#londonMap').attr('height', '100%');
-    this.houses = this.map.selectAll("path[id^='L-']");
+  loadSvg() {
+    d3.xml(londonMap).then(data => {
+      d3.select('.mapContainer-inner')
+        .node()
+        .append(data.documentElement);
+
+      // binds event after loading the map
+      this.bindD3MouseEvents();
+    });
   }
 
-  bindD3Events() {
+  bindD3MouseEvents() {
     let _this = this;
+
+    this.map = d3.select('.mapContainer-inner svg');
+
+    this.houses = this.map.selectAll("path[id^='L-']");
+
     this.houses.on('click', function() {
       _this.onBlockClicked(this.id);
     });
-
     this.houses.on('mouseover', function() {
       d3.select(this).style('opacity', '0.7');
     });
     this.houses.on('mouseout', function() {
       d3.select(this).style('opacity', '1');
     });
-
-    let svg = d3.select('#wrapper').call(
+    let svg = d3.select('#mapcontainer').call(
       d3
         .zoom()
         .scaleExtent([1, 8])
@@ -66,75 +74,39 @@ class Map extends Component {
   }
 
   updateD3() {
-    // turn array visited places in a string
-    this.setColorHouses('path', 0);
-    this.colorSearchHightlights();
-    this.colorLeads();
+    this.setColorHouses('path', 0); // reset style
+    this.hightlight(this.props.hightlights, 1); // search
+    this.hightlight(this.props.history, 1); //leads
   }
 
-  colorSearchHightlights() {
-    if (this.props.hightlights.length !== 0) {
-      let ids = this.props.hightlights.map(location => {
-        return '#L-' + location.address;
-      });
-
-      ids.join(',');
-
-      //update colors
-      this.map.selectAll(ids).style('fill', 'red');
-    }
-  }
-
-  colorLeads() {
-    if (this.props.history.length !== 0) {
-      let ids = this.props.history
+  // utils
+  hightlight(store, index) {
+    if (store.length > 0) {
+      let query = store
         .map(location => {
           return '#L-' + location.address;
         })
         .join(',');
 
-      //update colors
-      this.setColorHouses(ids, 1);
-    }
-
-    if (this.props.hightlights.length !== 0) {
-      let ids = this.props.hightlights.map(highlight => {
-        if (highlight.disctrict === 'SW') {
-          let id = highlight.address.slice(-2) + highlight.address.slice(0, -2);
-          return '#' + id;
-        }
-      });
-
-      var test = ids
-        .filter(function(el) {
-          return el != null;
-        })
-        .join(',');
-
-      if (test) {
-        d3.select('#londonMap')
-          .select('#SW-Yellow')
-          .selectAll(test)
-          .style('fill', 'blue');
-      }
+      this.setColorHouses(query, index);
     }
   }
 
-  setColorHouses(ids = 'path', i) {
+  setColorHouses(ids = '', i) {
     this.map
-      .selectAll('#SW-Blue, #NW-Blue')
+      .selectAll("[id^='Red']")
       .selectAll(ids)
-      .style('fill', this.color.blue[i]);
+      .style('fill', this.color.red[i]);
     this.map
-      .selectAll('#SW-Orange, #NW-Orange')
+      .selectAll("[id^='Orange']")
       .selectAll(ids)
       .style('fill', this.color.orange[i]);
     this.map
-      .selectAll('#SW-Yellow ,#NW-Yellow')
+      .selectAll("[id^='Yellow']")
       .selectAll(ids)
       .style('fill', this.color.yellow[i]);
     this.map
-      .selectAll('#SW-Green, #NW-Green')
+      .selectAll("[id^='Green']")
       .selectAll(ids)
       .style('fill', this.color.green[i]);
   }
@@ -146,8 +118,10 @@ class Map extends Component {
       return location.address === noPrefixId;
     });
 
+    //Update the store
     this.props.selectLocation(location[0]);
     this.props.updateHistory(location[0]);
+    //refresh the map
     this.updateD3();
   }
 }
