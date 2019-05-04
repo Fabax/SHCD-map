@@ -8,11 +8,13 @@ export default class MapPage extends Component {
   render() {
     return (
       <div className="mapPage">
+        <div className="sideBar container">
+          <DirectorySearch />
+          <History />
+        </div>
         <div className="mapContainer">
           <Map />
         </div>
-        <History />
-        <DirectorySearch />
       </div>
     );
   }

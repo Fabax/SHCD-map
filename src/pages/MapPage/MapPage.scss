@@ -1,9 +1,15 @@
 .mapPage {
-  overflow-y: hidden;
-  overflow-x: hidden;
   position: absolute;
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.sideBar {
+  width: 400px;
+  overflow: scroll;
+  padding: 1rem;
 }
 
 .mapContainer {

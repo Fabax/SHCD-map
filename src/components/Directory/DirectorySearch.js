@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './DirectorySearch.scss';
+import { highlightedLocations, selectLocation } from '../../actions';
 import Autosuggest from 'react-autosuggest';
-import { highlightedLocations } from '../../actions';
+import './DirectorySearch.scss';
 
 class DirectorySearch extends Component {
   constructor() {
@@ -37,6 +37,7 @@ class DirectorySearch extends Component {
             });
     }
 
+    //make sure the list is not too long
     if (suggestionList.length > 20) {
       suggestionList = suggestionList.splice(0, 20);
     }
@@ -52,7 +53,8 @@ class DirectorySearch extends Component {
   renderSuggestion = suggestion => (
     <div className="list is-hoverable">
       <a className="list-item">
-        {suggestion.name} - {suggestion.address}
+        <span className="name">{suggestion.name}</span>-
+        <span className="address">{suggestion.address}</span>
       </a>
     </div>
   );
@@ -74,8 +76,10 @@ class DirectorySearch extends Component {
     this.setState({
       suggestions: [],
     });
+  };
 
-    this.props.highlightedLocations([]);
+  onSuggestionSelected = (event, { suggestion }) => {
+    this.props.selectLocation(suggestion);
   };
 
   renderInputComponent = inputProps => (
@@ -102,6 +106,7 @@ class DirectorySearch extends Component {
           getSuggestionValue={this.getSuggestionValue}
           renderSuggestion={this.renderSuggestion}
           renderInputComponent={this.renderInputComponent}
+          onSuggestionSelected={this.onSuggestionSelected}
           inputProps={inputProps}
           className="input"
         />
@@ -117,5 +122,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { highlightedLocations },
+  { highlightedLocations, selectLocation },
 )(DirectorySearch);

@@ -84,6 +84,8 @@ class Map extends Component {
     this.setColorHouses('path', 0); // reset style
     this.hightlight(this.props.hightlights, 1); // search
     this.hightlight(this.props.history, 1); //leads
+
+    this.setColorHouses('#L-' + this.props.selectedLocation.address, 1); // select house
   }
 
   // utils
@@ -94,7 +96,6 @@ class Map extends Component {
           return '#L-' + location.address;
         })
         .join(',');
-
       this.setColorHouses(query, index);
     }
   }
