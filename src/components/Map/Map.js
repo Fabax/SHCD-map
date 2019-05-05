@@ -51,7 +51,7 @@ class Map extends Component {
     //set up variables for easy shortcuts later
     let _this = this;
     this.map = d3.select('.londonMap svg');
-    this.houses = this.map.selectAll("path[id^='L-']");
+    this.houses = this.map.selectAll("path[id^='L-'] , g[id^='L-']");
 
     //Mouse events
     this.houses.on('click', function() {
